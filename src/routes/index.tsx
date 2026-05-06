@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({ component: Index });
@@ -100,6 +100,9 @@ function TopBar() {
             {light ? "light" : "dark"}
           </span>
         </button>
+        <Link to="/dashboard" className="rounded-md border border-toxic/60 bg-toxic/10 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-toxic hover:bg-toxic/20">
+          My Dashboard →
+        </Link>
         <div className="hidden font-mono text-[10px] uppercase tracking-widest text-muted-foreground md:block">
           Climate Launch · Tokyo · 2026
         </div>
