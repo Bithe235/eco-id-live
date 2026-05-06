@@ -66,6 +66,16 @@ function Index() {
 }
 
 function TopBar() {
+  const [light, setLight] = useState(false);
+  useEffect(() => {
+    const stored = localStorage.getItem("cl-theme");
+    if (stored === "light") setLight(true);
+  }, []);
+  useEffect(() => {
+    document.documentElement.classList.toggle("light", light);
+    localStorage.setItem("cl-theme", light ? "light" : "dark");
+  }, [light]);
+
   return (
     <header className="relative z-10 flex items-center justify-between border-b border-border/60 bg-background/40 px-6 py-4 backdrop-blur">
       <div className="flex items-center gap-3">
@@ -73,8 +83,26 @@ function TopBar() {
         <span className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">Carbon Ledger</span>
         <span className="hidden font-mono text-xs text-toxic md:inline">// LIVE</span>
       </div>
-      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        Climate Launch · Tokyo · 2026
+      <div className="flex items-center gap-5">
+        <button
+          onClick={() => setLight((v) => !v)}
+          aria-label="Toggle theme"
+          className="group relative flex h-7 w-14 items-center rounded-full border border-border bg-input transition hover:border-toxic/60"
+        >
+          <span
+            className={`absolute top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full gradient-toxic font-mono text-[9px] font-bold text-primary-foreground shadow transition-all ${
+              light ? "left-[calc(100%-22px)]" : "left-[2px]"
+            }`}
+          >
+            {light ? "☀" : "☾"}
+          </span>
+          <span className="ml-2 font-mono text-[9px] uppercase tracking-widest text-muted-foreground opacity-0 group-hover:opacity-100">
+            {light ? "light" : "dark"}
+          </span>
+        </button>
+        <div className="hidden font-mono text-[10px] uppercase tracking-widest text-muted-foreground md:block">
+          Climate Launch · Tokyo · 2026
+        </div>
       </div>
     </header>
   );
