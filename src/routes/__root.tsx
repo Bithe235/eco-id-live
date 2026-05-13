@@ -1,4 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { AuthProvider } from "@/lib/auth-context";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -30,8 +31,8 @@ export const Route = createRootRoute({
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "Carbon Ledger — Live Score" },
       { name: "twitter:description", content: "Generate your ECO_ID and see your carbon debt in real time." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/94d1eed2-8db1-47c6-afae-00e4223b6701/id-preview-7594d9e8--75cbf55a-ea88-4413-9df3-632edea54175.lovable.app-1778053509431.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/94d1eed2-8db1-47c6-afae-00e4223b6701/id-preview-7594d9e8--75cbf55a-ea88-4413-9df3-632edea54175.lovable.app-1778053509431.png" },
+      { property: "og:image", content: "/og-image.png" },
+      { name: "twitter:image", content: "/og-image.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
@@ -42,7 +43,11 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootShell,
-  component: () => <Outlet />,
+  component: () => (
+    <AuthProvider>
+      <Outlet />
+    </AuthProvider>
+  ),
   notFoundComponent: NotFoundComponent,
 });
 
