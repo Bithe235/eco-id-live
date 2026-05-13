@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/")({ component: Index });
 
@@ -66,6 +67,7 @@ function Index() {
 }
 
 function TopBar() {
+  const { user, isAuthenticated } = useAuth();
   const [light, setLight] = useState(false);
   useEffect(() => {
     const stored = localStorage.getItem("cl-theme");
@@ -100,9 +102,15 @@ function TopBar() {
             {light ? "light" : "dark"}
           </span>
         </button>
-        <Link to="/dashboard" className="rounded-md border border-toxic/60 bg-toxic/10 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-toxic hover:bg-toxic/20">
-          My Dashboard →
-        </Link>
+        {isAuthenticated ? (
+          <Link to="/dashboard" className="rounded-md border border-toxic/60 bg-toxic/10 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-toxic hover:bg-toxic/20">
+            My Dashboard →
+          </Link>
+        ) : (
+          <Link to="/login" className="rounded-md border border-toxic/60 bg-toxic/10 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-toxic hover:bg-toxic/20">
+            Login →
+          </Link>
+        )}
         <div className="hidden font-mono text-[10px] uppercase tracking-widest text-muted-foreground md:block">
           Climate Launch · Tokyo · 2026
         </div>
@@ -141,17 +149,26 @@ function Intake(props: {
         <div className="mt-10 space-y-6">
           {step === 0 && (
             <Question label="What city do you live in?" hint="Local grid intensity changes everything.">
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {Object.keys(GRID_INTENSITY).map((c) => (
-                  <button key={c} onClick={() => setCity(c)}
-                    className={`rounded-md border px-4 py-3 text-left font-mono text-sm transition ${
-                      city === c
-                        ? "border-toxic bg-toxic/10 text-toxic glow-toxic"
-                        : "border-border bg-card hover:border-toxic/50"
-                    }`}>
-                    {c}
-                  </button>
-                ))}
+              <div className="space-y-3">
+                <select
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full rounded-md border border-border bg-input px-5 py-4 font-mono text-lg text-toxic focus:border-toxic focus:outline-none appearance-none cursor-pointer"
+                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23oklch(0.88 0.24 142)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.5rem' }}
+                >
+                  {Object.keys(GRID_INTENSITY).map((c) => (
+                    <option key={c} value={c} className="bg-card text-foreground">
+                      {c} — {GRID_INTENSITY[c].toFixed(2)} kg/kWh
+                    </option>
+                  ))}
+                </select>
+                <div className="rounded-md border border-toxic/30 bg-toxic/5 px-4 py-3 font-mono text-sm">
+                  <span className="text-muted-foreground">Selected: </span>
+                  <span className="text-toxic font-semibold">{city}</span>
+                  <span className="mx-2 text-muted-foreground">·</span>
+                  <span className="text-muted-foreground">Grid intensity: </span>
+                  <span className="text-toxic font-semibold">{GRID_INTENSITY[city].toFixed(2)} kg/kWh</span>
+                </div>
               </div>
             </Question>
           )}
